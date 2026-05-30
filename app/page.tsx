@@ -301,7 +301,7 @@ Detaylı bilgi ve özel teklif almak istiyorum.`
           <div className="absolute bottom-[170px] z-10 h-36 w-[62vw] max-w-[980px] rounded-[50%] bg-[#c9a26d]/32 blur-3xl" />
 
           <div
-            className={`relative z-20 mt-[135px] h-[43vw] max-h-[560px] min-h-[350px] w-[72vw] max-w-[1120px] rounded-[58px] border border-white/20 bg-cover bg-center shadow-[0_80px_165px_rgba(0,0,0,0.98),0_0_130px_rgba(201,162,109,0.23)] transition-transform duration-300 ${
+            className={`relative z-20 mt-[135px] h-[43vw] max-h-[560px] min-h-[350px] w-[72vw] max-w-[1120px] touch-none select-none rounded-[58px] border border-white/20 bg-cover bg-center shadow-[0_80px_165px_rgba(0,0,0,0.98),0_0_130px_rgba(201,162,109,0.23)] transition-transform duration-300 ${
               zoom > 1 ? "cursor-grab active:cursor-grabbing" : "cursor-default"
             }`}
             onMouseDown={(e) => startDrag(e.clientX, e.clientY)}
@@ -309,7 +309,10 @@ Detaylı bilgi ve özel teklif almak istiyorum.`
             onMouseUp={() => setDragging(false)}
             onMouseLeave={() => setDragging(false)}
             onTouchStart={(e) => startDrag(e.touches[0].clientX, e.touches[0].clientY)}
-            onTouchMove={(e) => moveDrag(e.touches[0].clientX, e.touches[0].clientY)}
+            onTouchMove={(e) => {
+              e.preventDefault();
+              moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+            }}
             onTouchEnd={() => setDragging(false)}
             style={{
               backgroundImage: `url(${selected.image})`,
@@ -331,6 +334,33 @@ Detaylı bilgi ve özel teklif almak istiyorum.`
               filter: "contrast(1.08) saturate(0.9)",
             }}
           />
+
+          <div className="absolute bottom-28 left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 md:hidden">
+            <button
+              onClick={() => setZoom((z) => Math.min(1.8, Number((z + 0.1).toFixed(2))))}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-[#c9a26d]/50 bg-black/70 text-2xl text-[#c9a26d] backdrop-blur"
+            >
+              +
+            </button>
+
+            <button
+              onClick={() => {
+                const value = Math.max(1, Number((zoom - 0.1).toFixed(2)));
+                setZoom(value);
+                if (value === 1) setPan({ x: 0, y: 0 });
+              }}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-[#c9a26d]/50 bg-black/70 text-2xl text-[#c9a26d] backdrop-blur"
+            >
+              −
+            </button>
+
+            <button
+              onClick={resetView}
+              className="rounded-full border border-[#c9a26d]/50 bg-black/70 px-4 py-3 text-xs font-bold text-[#c9a26d] backdrop-blur"
+            >
+              RESET
+            </button>
+          </div>
 
           <div className="absolute bottom-10 left-1/2 z-30 -translate-x-1/2 rounded-xl border border-[#c9a26d]/30 bg-black/65 px-6 py-4 text-sm text-[#d8bf8a] shadow-[0_0_35px_rgba(201,162,109,0.18)] backdrop-blur">
             Yakınlaştırın · Sürükleyerek yüzeyde gezin
